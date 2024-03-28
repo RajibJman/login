@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import RegistrationPage from './registration'; 
 import { useNavigate } from 'react-router-dom'; 
+import axios from 'axios';
+
+// const axios = require('axios');
+
 const LoginPage = () => {
   // State variables to store email and password
   const [email, setEmail] = useState('');
@@ -10,30 +14,102 @@ const LoginPage = () => {
 
   // Function to handle form submission
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Retrieve user data from local storag
-  
-    var remail=storedData[0].email;
-     var rpassword=storedData[0].password;
-    // Check if entered credentials match stored credentials
-    if(storedData){
-        if (email === remail && password === rpassword) {
-            // Redirect user to a different page
-            console.log("matched");
-            alert('Password matched');
 
-            navigate('/RegistrationPage');
-            // eslint-disable-next-line no-restricted-globals
-            // 
-            
-          //   history.push('/dashboard'); // Replace '/dashboard' with your desired route
-          } else {
-            alert('Invalid email or password. Please try again.');
-          }
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
    
+ 
+    if (!email || !password) {
+      console.log('Please fill in all fields.');
+      return;
+    }
+ 
+    try {
+      console.log(email)
+      const response = await axios.post(
+        'http://localhost:3000/api/auth/login',
+        { email, password },
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    );
+ 
+      console.log('bue')
+        
+      if (response.status === 210) {
+        console.log('admin');
+
+        const token = response.data.token;
+          
+        // Save the token to localStorage
+        localStorage.setItem('token', token)
+
+      //   const userRole = response.data.role;
+      //  setRole(userRole);
+      alert("hello admin");
+        navigate('/register');
+     
+    }
+
+
+      if (response.status === 220) {
+          console.log('user');
+
+          const token = response.data.token;
+            
+          // Save the token to localStorage
+          localStorage.setItem('token', token)
+
+        //   const userRole = response.data.role;
+        //  setRole(userRole);
+        alert("hello user");
+          navigate('/passReset');
+       
+      } else {
+        console.log('Login failed. Please try again.');
+       
+      }
+    } catch (error) {
+      console.error('An error occurred:', error.message);
+     
+    }
+ 
+    setEmail('');
+    setPassword('');
   };
+// has context menu
+// Compose
+
+
+
+
+
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+   
+  
+  //   var remail=storedData[0].email;
+  //    var rpassword=storedData[0].password;
+   
+  //   if(storedData){
+  //       if (email === remail && password === rpassword) {
+  //           // Redirect user to a different page
+  //           console.log("matched");
+  //           alert('Password matched');
+
+  //           navigate('/RegistrationPage');
+  //           // eslint-disable-next-line no-restricted-globals
+  //           // 
+            
+  //         //   history.push('/dashboard'); // Replace '/dashboard' with your desired route
+  //         } else {
+  //           alert('Invalid email or password. Please try again.');
+  //         }
+  //   }
+   
+  // };
 
 
 

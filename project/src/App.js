@@ -3,6 +3,8 @@ import { BrowserRouter,Routes, Route, BrowserRouter as Router } from 'react-rout
 import './App.css';
 import LoginPage from './Login';
 import RegistrationPage from './registration';
+import PasswordResetForm from './passReset';
+
 
 
 function App() {
@@ -12,7 +14,8 @@ function App() {
     <Routes>
       
         <Route path="/" element={<LoginPage/>}/>
-        <Route path="/RegistrationPage" element={<RegistrationPage/>}/>
+        <Route path="/register" element={<RegistrationPage/>}/>
+        <Route path="/passReset" element={<PasswordResetForm/>}/>
 
     </Routes>
     </BrowserRouter>

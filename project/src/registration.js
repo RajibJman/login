@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const RegistrationPage = () => {
   // State variables to store input values
@@ -6,38 +7,51 @@ const RegistrationPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const [role, setRole] = useState('');
 
   // Function to handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can add your logic for registration
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Repeat Password:', repeatPassword);
 
-    
-    if (email.trim() === '' || password.trim() === '') {
-        alert('Please enter email and password.');
+    // Perform basic validation checks
+    if (!name || !email || !password || !repeatPassword || !role) {
+        alert('Please fill in all fields.');
         return;
-      }
-  
-      // Check if email is not already registered
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-      const existingUser = registeredUsers.find(user => user.email === email);
-      if (existingUser) {
-        alert('Email already registered. Please use a different email.');
+    }
+
+    if (password !== repeatPassword) {
+        alert('Passwords do not match.');
         return;
-      }
-  
-      // Save new user to local storage
-      const newUser = { email, password };
-      localStorage.setItem('registeredUsers', JSON.stringify([...registeredUsers, newUser]));
-  
-      alert('Registration successful!');
-      setEmail('');
-      setPassword('');
-  };
+    }
+
+    try {
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
+
+        // Check if token exists
+        if (!token) {
+            alert('Token not found in localStorage. Please log in again.');
+            // Redirect the user to the login page or handle the scenario accordingly
+            return;
+        }
+
+        // Send a POST request to register the user with the token
+        await axios.post('http://localhost:3000/api/auth/register', { name, email, password, role }, {
+            headers: {
+                Authorization: `Bearer ${token}` // Pass the token in the Authorization header
+            }
+        });
+
+        alert('Registration successful!'); // Show success message
+        // Redirect user to login page or dashboard page
+        // window.location.href = '/login'; // Example redirect to login page
+    } catch (error) {
+        console.error('Registration failed:', error.response ? error.response.data : error);
+        alert('Registration failed. Please try again later.');
+    }
+};
+
+
 
   return (
     <section className="vh-100" style={{ backgroundColor: '#eee' }}>
@@ -98,6 +112,7 @@ const RegistrationPage = () => {
                         </div>
                       </div>
 
+
                       <div className="d-flex flex-row align-items-center mb-4">
                         <i className="fas fa-key fa-lg me-3 fa-fw"></i>
                         <div className="form-outline flex-fill mb-0">
@@ -112,6 +127,25 @@ const RegistrationPage = () => {
                           <label className="form-label" htmlFor="form3Example4cd">Repeat your password</label>
                         </div>
                       </div>
+
+
+
+                      <div className="d-flex flex-row align-items-center mb-4">
+                        <i className="fas fa-user fa-lg me-3 fa-fw"></i>
+                        <div className="form-outline flex-fill mb-0">
+                          <input
+                            type="text"
+                            id="form3Example1c"
+                            className="form-control"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            required
+                          />
+                          <label className="form-label" htmlFor="form3Example1c">Role</label>
+                        </div>
+                      </div>
+
+
 
                       <div className="form-check d-flex justify-content-center mb-5">
                         <input className="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
