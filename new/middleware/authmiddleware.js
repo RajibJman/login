@@ -2,6 +2,11 @@
 
 const jwt = require('jsonwebtoken');
 const User = require('../models/register');
+<<<<<<< HEAD
+// const model=require(module)
+
+=======
+>>>>>>> ee9b51f910e5cbe7b5fdfd45d0041d917af97344
 
 const requireAuth = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];

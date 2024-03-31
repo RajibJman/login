@@ -15,7 +15,12 @@ exports.resetPassword = async (req, res) => {
         if(user.password==oldPassword)
         {
             user.password = newPassword;
+<<<<<<< HEAD
+            user.checkreset=true;  
+            await user.save();
+=======
         await user.save();
+>>>>>>> ee9b51f910e5cbe7b5fdfd45d0041d917af97344
 
         res.status(200).json({ message: 'Password reset successfully' });
         }
